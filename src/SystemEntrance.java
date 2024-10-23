@@ -10,6 +10,5 @@ Description: 整个程序系统的入口，仅作为入口使用
 public class SystemEntrance {
     public static void main(String[] args) {
 
-
     }
 }
