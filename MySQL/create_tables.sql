@@ -67,67 +67,8 @@ create table customers(
 create table reservations(
     custName char(30),
     resvType int,
-    -- 确定预定的location或者flightNum来唯一确定一条预约
-    resvKey char(30) not null,
+    -- flightNum/location+resvType+custName的元组唯一
+    resvKey char(80) not null,
     primary key(resvKey),
     foreign key(custName) references customers(custName)
 );
-
--- 创建检查resvType内容是否合法的触发器
-create trigger check_resv_type before insert on reservations
-for each row
-begin
-    if new.resvType < 1 or new.resvType > 3 then
-        signal sqlstate '45000' set message_text = 'resvType must be 1, 2 or 3';
-    end if;
-end;
-
--- 创建检查resvKey内容是否合法的触发器
-create trigger check_resv_key before insert on reservations
-for each row
-begin
-    if new.resvType = 1 then
-        if not exists(select * from flights where flightNum = new.resvKey) then
-            signal sqlstate '45000' set message_text = 'flightNum not exists';
-        end if;
-    end if;
-    if new.resvType = 2 then
-        if not exists(select * from hotels where location = new.resvKey) then
-            signal sqlstate '45000' set message_text = 'location not exists';
-        end if;
-    end if;
-    if new.resvType = 3 then
-        if not exists(select * from bus where location = new.resvKey) then
-            signal sqlstate '45000' set message_text = 'location not exists';
-        end if;
-    end if;
-end;
-
--- 创建更新航班、宾馆、巴士剩余数量的触发器
-create trigger reset_avail after insert on reservations
-for each row
-begin
-    if new.resvType = 1 then
-        update flights set numAvail = numAvail - 1 where flightNum = new.resvKey;
-    end if;
-    if new.resvType = 2 then
-        update hotels set numAvail = numAvail - 1 where location = new.resvKey;
-    end if;
-    if new.resvType = 3 then
-        update bus set numAvail = numAvail - 1 where location = new.resvKey;
-    end if;
-end;
-
-create trigger release_avail after delete on reservations
-for each row
-begin
-    if old.resvType = 1 then
-        update flights set numAvail = numAvail + 1 where flightNum = old.resvKey;
-    end if;
-    if old.resvType = 2 then
-        update hotels set numAvail = numAvail + 1 where location = old.resvKey;
-    end if;
-    if old.resvType = 3 then
-        update bus set numAvail = numAvail + 1 where location = old.resvKey;
-    end if;
-end;
