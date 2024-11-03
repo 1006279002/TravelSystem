@@ -52,8 +52,8 @@ create table bus(
 );
 
 -- 创建顾客的表格
--- custName是主键，是客户的姓名
--- custID是客户的ID
+-- custName是主键，是客户的用户名
+-- custID是客户的密码
 create table customers(
     custName char(30) not null,
     custID char(30),

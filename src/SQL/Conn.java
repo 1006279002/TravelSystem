@@ -11,13 +11,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conn{
-    public Connection con;
+    public static Connection con;
     public static String user;
     public static String password;
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("Driver loaded");
         }catch (ClassNotFoundException e){
             e.printStackTrace();
         }
@@ -25,7 +24,6 @@ public class Conn{
         password="1234";
         try{
             con=DriverManager.getConnection("jdbc:mysql://localhost:3306/travelsystem",user,password);
-            System.out.println("Connection established");
         }catch(SQLException e){
             e.printStackTrace();
         }
