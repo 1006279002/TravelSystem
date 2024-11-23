@@ -43,7 +43,6 @@ public class RegisterInterface {
                 run=false;
             } catch (SQLException e) {
                 System.out.println("注册失败！");
-                e.printStackTrace();
             }
         }
     }

@@ -72,7 +72,7 @@ public class AdminInterface {
             System.out.println("2.查看所有的用户信息");
             System.out.println("3.查看可预定信息");
             System.out.println("4.修改所有后台数据");
-            System.out.println("5.检查路径完整性");
+            System.out.println("5.查询路线");
             System.out.println("6.退出返回");
             System.out.println("请选择您的操作：");
             int choice = sc.nextInt();
@@ -90,7 +90,7 @@ public class AdminInterface {
                     System.out.println("修改所有后台数据");
                     break;
                 case 5:
-                    System.out.println("检查路径完整性");
+                    System.out.println("查询路线");
                     break;
                 case 6:
                     run = false;

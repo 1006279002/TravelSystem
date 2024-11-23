@@ -50,10 +50,10 @@ public class LoginInterface {
                         UserInterface.userInterface(account);
                         run = false;
                     } else {
-                        System.out.println("登录失败！");
+                        System.out.println("账号不存在！");
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.out.println("数据库连接异常！");
                 }
             }
         }
