@@ -1,3 +1,10 @@
+/*
+Create Time: 2024/11/20
+Author: 高涵宸 (CrazyApple)
+studentID:22009200189
+Description: 管理员的操作界面，包括查看所有用户的预定信息，查看所有用户信息，查看可预定信息，修改所有后台数据，查询路线等功能
+*/
+
 package Interface;
 
 import SQL.Conn;
@@ -87,7 +94,7 @@ public class AdminInterface {
                     AvailReservationInterface.availReservationInterface();
                     break;
                 case 4:
-                    System.out.println("修改所有后台数据");
+                    ModifyInterface.modifyInterface();
                     break;
                 case 5:
                     System.out.println("查询路线");
