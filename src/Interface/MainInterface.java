@@ -17,7 +17,7 @@ public class MainInterface {
 
         System.out.println("-------------------------------");
         System.out.println("欢迎使用本旅行系统！");
-        System.out.println("此系统版本为b1.5.0");
+        System.out.println("此系统版本为b1.6.0");
         while(run){
             System.out.println("-------------------------------");
             System.out.println("请选择登录或者注册");
@@ -25,15 +25,15 @@ public class MainInterface {
             System.out.println("2.注册");
             System.out.println("3.退出");
             System.out.print("请输入您的选择：");
-            int choice = sc.nextInt();
+            String choice = sc.nextLine();
             switch (choice){
-                case 1:
+                case "1":
                     LoginInterface.loginInterface();
                     break;
-                case 2:
+                case "2":
                     RegisterInterface.registerInterface();
                     break;
-                case 3:
+                case "3":
                     run = false;
                     System.out.println("感谢使用本旅行系统，再见！");
                     break;

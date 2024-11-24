@@ -13,12 +13,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Scanner;
+import java.util.*;
 
 public class AdminInterface {
     static Connection con= Conn.getConnection();
     static Statement st;
-    static String sql;
+    private static String sql;
 
     static void showReservations(){
         try {
@@ -63,7 +63,86 @@ public class AdminInterface {
         }
     }
 
+    //查询路线,和UserInterface中checkPath()逻辑相同，都需要获取Vector<String>的路径信息
+    static void searchPath(String custName){
+        if(UserInterface.checkPath(custName,true)){
+            System.out.println("路径完整，下面是此用户的行程");
+            System.out.println();
+        }else{
+            System.out.println("路径不完整,查询失败");
+            System.out.println();
+            return;
+        }
 
+        try {
+            st=con.createStatement();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        sql="select * from reservations where custName='"+custName+"'";
+        try {
+            ResultSet rs=st.executeQuery(sql);
+            Vector<String> path=new Vector<>();
+            while (rs.next()) {
+                String[] it = rs.getString("resvKey").split("-");
+                if (it[1].equals("1")) {
+                    path.add(it[0]);
+                }
+            }
+            rs.close();
+            if(path.isEmpty()){
+                System.out.println("您还没有预定任何行程");
+                return;
+            }
+            Map<String, String> flightMap = new HashMap<>();
+            for (String flightNum : path) {
+                sql = "select * from flights where flightNum='" + flightNum + "'";
+                ResultSet rs_flight = st.executeQuery(sql);
+                if (rs_flight.next()) {
+                    String fromCity = rs_flight.getString("FromCity");
+                    String arivCity = rs_flight.getString("ArivCity");
+                    flightMap.put(fromCity, arivCity);
+                }
+            }
+
+            String startCity = null;
+            for (String city : flightMap.keySet()) {
+                if (!flightMap.containsValue(city)) {
+                    startCity = city;
+                    break;
+                }
+            }
+
+            System.out.println("起点为："+startCity);
+            System.out.println();
+
+            String currentCity = startCity;
+            Set<String> visitedCities = new HashSet<>();
+            while (currentCity != null && !visitedCities.contains(currentCity)) {
+                visitedCities.add(currentCity);
+                currentCity = flightMap.get(currentCity);
+                if(currentCity!=null) {
+                    System.out.println("下一站为：" + currentCity);
+                    sql = "select * from reservations where custName='" + custName + "' and (resvType=2 or resvType=3) and resvKey like '" + currentCity + "-%'";
+                    ResultSet rs_resv = st.executeQuery(sql);
+                    while (rs_resv.next()) {
+                        String resvType = rs_resv.getString("resvType");
+                        String resvKey = rs_resv.getString("resvKey");
+                        if (resvType.equals("2")) {
+                            System.out.println("酒店预定：" + resvKey);
+                        } else if (resvType.equals("3")) {
+                            System.out.println("巴士预定：" + resvKey);
+                        }
+                    }
+                    System.out.println();
+                    rs_resv.close();
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static void adminInterface() {
         Scanner sc = new Scanner(System.in);
@@ -82,24 +161,26 @@ public class AdminInterface {
             System.out.println("5.查询路线");
             System.out.println("6.退出返回");
             System.out.println("请选择您的操作：");
-            int choice = sc.nextInt();
+            String choice = sc.nextLine();
             switch (choice) {
-                case 1:
+                case "1":
                     showReservations();
                     break;
-                case 2:
+                case "2":
                     showCustomers();
                     break;
-                case 3:
+                case "3":
                     AvailReservationInterface.availReservationInterface();
                     break;
-                case 4:
+                case "4":
                     ModifyInterface.modifyInterface();
                     break;
-                case 5:
-                    System.out.println("查询路线");
+                case "5":
+                    System.out.println("请输入查询的用户名：");
+                    String custName = sc.nextLine();
+                    searchPath(custName);
                     break;
-                case 6:
+                case "6":
                     run = false;
                     break;
                 default:

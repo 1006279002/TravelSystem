@@ -15,11 +15,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
-@SuppressWarnings("SqlSourceToSinkFlow")
 public class UserInterface {
     static Connection con = Conn.getConnection();
     static Statement st;
-    static String sql;
+    private static String sql;
 
     //更新预约
     static void updateReservation(String custName) {
@@ -54,9 +53,13 @@ public class UserInterface {
         }
 
         try {
-            st.executeQuery(sql);
+            ResultSet rs=st.executeQuery(sql);
+            if(!rs.next()) {
+                System.out.println("可预定信息不存在，请重新输入");
+                return;
+            }
         } catch (SQLException e) {
-            System.out.println("可预定信息不存在，请重新输入");
+            System.out.println("数据库连接产生错误");
             return;
         }
 
@@ -135,7 +138,7 @@ public class UserInterface {
 
     //路线检查完整性，检查航班是否相接,不可以是回环
     //由于简化了巴士和酒店的关系，所以检查酒店和巴士的地名是否超出了航班的地名
-    static void checkPath(String custName) {
+    public static boolean checkPath(String custName,boolean check) {
         ResultSet rs, rs_flight;
 
         try {
@@ -154,10 +157,11 @@ public class UserInterface {
                     path.add(it[0]);
                 }
             }
-
+            rs.close();
             if (path.isEmpty()) {
-                System.out.println("您还没有预定航班，请先预定航班！");
-                return;
+                if(!check)
+                    System.out.println("您还没有预定航班，请先预定航班！");
+                return false;
             }
 
             // 建立一个映射表来存放航班的起点和终点
@@ -182,8 +186,9 @@ public class UserInterface {
             }
 
             if (startCity == null) {
-                System.out.println("您的路径不完整，请重新预定！");
-                return;
+                if(!check)
+                    System.out.println("您的路径不完整，请重新预定！");
+                return false;
             }
 
             String currentCity = startCity;
@@ -194,7 +199,9 @@ public class UserInterface {
             }
 
             if ((visitedCities.size() - 1) != flightMap.size() || currentCity != null) {
-                System.out.println("您的路径不完整，请重新预定！");
+                if(!check)
+                    System.out.println("您的路径不完整，请重新预定！");
+                return false;
             } else {
                 sql = "select * from reservations where custName='" + custName + "'";
                 rs=st.executeQuery(sql);
@@ -210,13 +217,19 @@ public class UserInterface {
                 }
 
                 if (OutOfBounds) {
-                    System.out.println("您的酒店或巴士地名超出了航班的地名，请重新预定！");
+                    if(!check)
+                        System.out.println("您的酒店或巴士地名超出了航班的地名，请重新预定！");
+                    return false;
                 } else {
-                    System.out.println("您的路径完整！");
+                    if(!check)
+                        System.out.println("您的路径完整！");
+                    return true;
                 }
             }
         } catch (SQLException e) {
-            System.out.println("检查路径失败，请检查您的预定信息！");
+            if(!check)
+                System.out.println("检查路径失败，请检查您的预定信息！");
+            return false;
         }
     }
 
@@ -238,21 +251,21 @@ public class UserInterface {
             System.out.println("4.路线检查");
             System.out.println("5.退出返回");
             System.out.println("请选择您的操作：");
-            int choice = sc.nextInt();
+            String choice = sc.nextLine();
             switch (choice) {
-                case 1:
+                case "1":
                     AvailReservationInterface.availReservationInterface();
                     break;
-                case 2:
+                case "2":
                     updateReservation(account);
                     break;
-                case 3:
+                case "3":
                     undoReservation(account);
                     break;
-                case 4:
-                    checkPath(account);
+                case "4":
+                    checkPath(account,false);
                     break;
-                case 5:
+                case "5":
                     run = false;
                     break;
                 default:

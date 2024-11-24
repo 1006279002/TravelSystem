@@ -15,6 +15,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 public class RegisterInterface {
+    @SuppressWarnings("SqlSourceToSinkFlow")
     public static void registerInterface() {
         Connection con = Conn.getConnection();
         Scanner sc = new Scanner(System.in);

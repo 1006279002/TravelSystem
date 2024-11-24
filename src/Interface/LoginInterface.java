@@ -16,6 +16,8 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 public class LoginInterface {
+
+    @SuppressWarnings("SqlSourceToSinkFlow")
     public static void loginInterface() {
         Scanner sc = new Scanner(System.in);
         boolean run = true;

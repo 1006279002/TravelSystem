@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class AvailReservationInterface {
     static Connection con = Conn.getConnection();
     static Statement st;
-    static String sql;
+    private static String sql;
 
     static void showFlihgts(){
         try {
