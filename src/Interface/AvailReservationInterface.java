@@ -1,3 +1,10 @@
+/*
+Create Time: 2024/11/20
+Author: 高涵宸 (CrazyApple)
+studentID:22009200189
+Description: 可预约服务查询界面，用于查询可预约的飞机航班，公交车班次，旅店房间
+*/
+
 package Interface;
 
 import SQL.Conn;

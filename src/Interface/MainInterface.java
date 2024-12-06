@@ -17,7 +17,7 @@ public class MainInterface {
 
         System.out.println("-------------------------------");
         System.out.println("欢迎使用本旅行系统！");
-        System.out.println("此系统版本为b1.6.0");
+        System.out.println("此系统版本为v1.6.0");
         while(run){
             System.out.println("-------------------------------");
             System.out.println("请选择登录或者注册");
